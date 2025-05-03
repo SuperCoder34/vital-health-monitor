@@ -35,18 +35,15 @@ const Stats = () => {
         <h1 className="text-2xl font-bold mb-4">Health Statistics</h1>
         
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="summary">Summary</TabsTrigger>
-            <TabsTrigger value="charts">Charts</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
           
           <TabsContent value="summary">
             <StatsSummary metrics={metrics} date={selectedDate} />
-          </TabsContent>
-          
-          <TabsContent value="charts">
-            <div className="space-y-4">
+            
+            <div className="mt-4 space-y-4">
               <BloodPressureChart data={bloodPressure} />
               
               <Card>
