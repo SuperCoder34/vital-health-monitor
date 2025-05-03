@@ -6,7 +6,7 @@ import {
   Utensils, 
   SmilePlus,
   CloudMoon, 
-  Timer, 
+  Weight, 
   Pill,
   Droplet
 } from 'lucide-react';
@@ -58,9 +58,9 @@ const HealthDataEntry: React.FC<HealthDataEntryProps> = ({ onOpenModal }) => {
           onClick={() => onOpenModal('exercise')} 
         />
         <EntryItem 
-          icon={<Timer className="h-6 w-6 text-health-primary" />} 
-          title="Meditation" 
-          onClick={() => onOpenModal('meditation')} 
+          icon={<Weight className="h-6 w-6 text-health-primary" />} 
+          title="Weight" 
+          onClick={() => onOpenModal('weight')} 
         />
         <EntryItem 
           icon={<SmilePlus className="h-6 w-6 text-health-primary" />} 

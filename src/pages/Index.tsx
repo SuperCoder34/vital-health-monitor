@@ -11,6 +11,7 @@ import BloodPressureModal from '@/components/modals/BloodPressureModal';
 import FoodModal from '@/components/modals/FoodModal';
 import ExerciseModal from '@/components/modals/ExerciseModal';
 import MoodModal from '@/components/modals/MoodModal';
+import WeightModal from '@/components/modals/WeightModal';
 import { useToast } from '@/components/ui/use-toast';
 
 interface BloodPressureData {
@@ -30,6 +31,12 @@ interface MoodData {
   notes?: string;
 }
 
+interface WeightData {
+  weight: number;
+  unit: string;
+  notes?: string;
+}
+
 const Index = () => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState('Today, May 3');
@@ -43,6 +50,10 @@ const Index = () => {
   const [dietStatus, setDietStatus] = useState('1350 cal - Good');
   const [moodStatus, setMoodStatus] = useState('Happy');
   const [medicationStatus, setMedicationStatus] = useState('3/3 Completed');
+  const [weightStatus, setWeightStatus] = useState<WeightData>({
+    weight: 70,
+    unit: 'kg'
+  });
 
   const handleOpenModal = (modalType: string) => {
     setOpenModal(modalType);
@@ -92,6 +103,17 @@ const Index = () => {
     toast({
       title: "Mood recorded",
       description: `Your mood has been recorded as ${data.mood}.`
+    });
+    
+    handleCloseModal();
+  };
+
+  const handleWeightSubmit = (data: WeightData) => {
+    setWeightStatus(data);
+    
+    toast({
+      title: "Weight recorded",
+      description: `Your weight of ${data.weight}${data.unit} has been saved.`
     });
     
     handleCloseModal();
@@ -188,6 +210,12 @@ const Index = () => {
         open={openModal === 'mood'} 
         onOpenChange={() => handleCloseModal()} 
         onSubmit={handleMoodSubmit}
+      />
+      <WeightModal
+        open={openModal === 'weight'} 
+        onOpenChange={() => handleCloseModal()}
+        onSubmit={handleWeightSubmit}
+        defaultValues={weightStatus}
       />
     </div>
   );
