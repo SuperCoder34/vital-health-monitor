@@ -13,10 +13,36 @@ import ExerciseModal from '@/components/modals/ExerciseModal';
 import MoodModal from '@/components/modals/MoodModal';
 import { useToast } from '@/components/ui/use-toast';
 
+interface BloodPressureData {
+  systolic: number;
+  diastolic: number;
+  pulse?: number;
+  notes?: string;
+}
+
+interface FoodData {
+  mealType: string;
+  description?: string;
+}
+
+interface MoodData {
+  mood: string;
+  notes?: string;
+}
+
 const Index = () => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState('Today, May 3');
   const [openModal, setOpenModal] = useState<string | null>(null);
+
+  // State for health metrics
+  const [bloodPressure, setBloodPressure] = useState<BloodPressureData>({
+    systolic: 120,
+    diastolic: 80
+  });
+  const [dietStatus, setDietStatus] = useState('1350 cal - Good');
+  const [moodStatus, setMoodStatus] = useState('Happy');
+  const [medicationStatus, setMedicationStatus] = useState('3/3 Completed');
 
   const handleOpenModal = (modalType: string) => {
     setOpenModal(modalType);
@@ -24,6 +50,51 @@ const Index = () => {
 
   const handleCloseModal = () => {
     setOpenModal(null);
+  };
+
+  // Handlers for submitting different health metrics
+  const handleBloodPressureSubmit = (data: BloodPressureData) => {
+    setBloodPressure(data);
+    
+    // Determine blood pressure status
+    let status = 'Normal';
+    if (data.systolic >= 140 || data.diastolic >= 90) {
+      status = 'High';
+    } else if (data.systolic < 90 || data.diastolic < 60) {
+      status = 'Low';
+    }
+    
+    toast({
+      title: "Blood pressure recorded",
+      description: `Your reading of ${data.systolic}/${data.diastolic} has been saved.`
+    });
+    
+    handleCloseModal();
+  };
+
+  const handleFoodSubmit = (data: FoodData) => {
+    // In a real app, this would calculate calories based on food
+    // For now, let's just update with a random calorie count
+    const calories = Math.floor(Math.random() * 500) + 300;
+    setDietStatus(`${calories} cal - ${calories < 600 ? 'Good' : 'High'}`);
+    
+    toast({
+      title: "Food recorded",
+      description: `Your ${data.mealType.toLowerCase()} has been saved.`
+    });
+    
+    handleCloseModal();
+  };
+
+  const handleMoodSubmit = (data: MoodData) => {
+    setMoodStatus(data.mood);
+    
+    toast({
+      title: "Mood recorded",
+      description: `Your mood has been recorded as ${data.mood}.`
+    });
+    
+    handleCloseModal();
   };
 
   return (
@@ -43,14 +114,14 @@ const Index = () => {
           <MetricCard 
             icon={Heart} 
             label="Blood Pressure" 
-            value="120/80 - Normal" 
+            value={`${bloodPressure.systolic}/${bloodPressure.diastolic} - ${bloodPressure.systolic >= 140 || bloodPressure.diastolic >= 90 ? 'High' : bloodPressure.systolic < 90 || bloodPressure.diastolic < 60 ? 'Low' : 'Normal'}`} 
             bgColor="bg-blue-50"
             onClick={() => handleOpenModal('bloodPressure')}
           />
           <MetricCard 
             icon={Utensils} 
             label="Diet Status" 
-            value="1350 cal - Good" 
+            value={dietStatus} 
             bgColor="bg-green-50"
             iconColor="text-green-600"
             onClick={() => handleOpenModal('food')}
@@ -58,7 +129,7 @@ const Index = () => {
           <MetricCard 
             icon={SmilePlus} 
             label="Mood Status" 
-            value="Happy" 
+            value={moodStatus} 
             bgColor="bg-yellow-50"
             iconColor="text-yellow-600"
             onClick={() => handleOpenModal('mood')}
@@ -66,7 +137,7 @@ const Index = () => {
           <MetricCard 
             icon={Pill} 
             label="Medication" 
-            value="3/3 Completed" 
+            value={medicationStatus} 
             bgColor="bg-purple-50"
             iconColor="text-purple-600"
             onClick={() => toast({ title: "All medications taken!", description: "You've taken all your medications for today." })}
@@ -101,10 +172,13 @@ const Index = () => {
       <BloodPressureModal 
         open={openModal === 'bloodPressure'} 
         onOpenChange={() => handleCloseModal()} 
+        onSubmit={handleBloodPressureSubmit}
+        defaultValues={bloodPressure}
       />
       <FoodModal 
         open={openModal === 'food'} 
         onOpenChange={() => handleCloseModal()} 
+        onSubmit={handleFoodSubmit}
       />
       <ExerciseModal 
         open={openModal === 'exercise'} 
@@ -113,6 +187,7 @@ const Index = () => {
       <MoodModal 
         open={openModal === 'mood'} 
         onOpenChange={() => handleCloseModal()} 
+        onSubmit={handleMoodSubmit}
       />
     </div>
   );

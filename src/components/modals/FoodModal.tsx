@@ -8,13 +8,30 @@ import { Camera } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
 
+interface FoodData {
+  mealType: string;
+  description?: string;
+}
+
 interface FoodModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmit: (data: FoodData) => void;
 }
 
-const FoodModal: React.FC<FoodModalProps> = ({ open, onOpenChange }) => {
+const FoodModal: React.FC<FoodModalProps> = ({ open, onOpenChange, onSubmit }) => {
   const [hasPhoto, setHasPhoto] = useState(false);
+  const [mealType, setMealType] = useState('breakfast');
+  const [description, setDescription] = useState('');
+  
+  // Reset form when modal opens
+  React.useEffect(() => {
+    if (open) {
+      setHasPhoto(false);
+      setMealType('breakfast');
+      setDescription('');
+    }
+  }, [open]);
   
   const takePhoto = () => {
     // In a real app, this would access the camera
@@ -23,13 +40,24 @@ const FoodModal: React.FC<FoodModalProps> = ({ open, onOpenChange }) => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, here we would send the data to a backend
-    toast({
-      title: "Food recorded",
-      description: "Your meal has been recorded successfully.",
-    });
-    onOpenChange(false);
-    setHasPhoto(false);
+    
+    if (!hasPhoto) {
+      toast({
+        title: "Please take a photo",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const data: FoodData = {
+      mealType: mealType.charAt(0).toUpperCase() + mealType.slice(1) // Capitalize first letter
+    };
+    
+    if (description.trim()) {
+      data.description = description;
+    }
+    
+    onSubmit(data);
   };
   
   return (
@@ -66,7 +94,7 @@ const FoodModal: React.FC<FoodModalProps> = ({ open, onOpenChange }) => {
           
           <div className="space-y-2">
             <Label htmlFor="mealType">Meal Type</Label>
-            <Select defaultValue="breakfast">
+            <Select defaultValue={mealType} onValueChange={setMealType}>
               <SelectTrigger>
                 <SelectValue placeholder="Select meal type" />
               </SelectTrigger>
@@ -84,6 +112,8 @@ const FoodModal: React.FC<FoodModalProps> = ({ open, onOpenChange }) => {
             <Input 
               id="description" 
               placeholder="Describe your meal"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           

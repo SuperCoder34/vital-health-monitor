@@ -1,26 +1,72 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
+
+interface BloodPressureData {
+  systolic: number;
+  diastolic: number;
+  pulse?: number;
+  notes?: string;
+}
 
 interface BloodPressureModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmit: (data: BloodPressureData) => void;
+  defaultValues?: BloodPressureData;
 }
 
-const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ open, onOpenChange }) => {
+const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ 
+  open, 
+  onOpenChange, 
+  onSubmit,
+  defaultValues = { systolic: 120, diastolic: 80 }
+}) => {
+  const [systolic, setSystolic] = useState(defaultValues.systolic.toString());
+  const [diastolic, setDiastolic] = useState(defaultValues.diastolic.toString());
+  const [pulse, setPulse] = useState(defaultValues.pulse?.toString() || '');
+  const [notes, setNotes] = useState(defaultValues.notes || '');
+  
+  // Update form values when default values change
+  useEffect(() => {
+    if (defaultValues) {
+      setSystolic(defaultValues.systolic.toString());
+      setDiastolic(defaultValues.diastolic.toString());
+      setPulse(defaultValues.pulse?.toString() || '');
+      setNotes(defaultValues.notes || '');
+    }
+  }, [defaultValues, open]);
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, here we would send the data to a backend
-    toast({
-      title: "Blood pressure recorded",
-      description: "Your blood pressure data has been saved successfully.",
-    });
-    onOpenChange(false);
+    
+    // Validate inputs
+    const systolicNum = parseInt(systolic);
+    const diastolicNum = parseInt(diastolic);
+    
+    if (isNaN(systolicNum) || isNaN(diastolicNum)) {
+      return; // Basic validation
+    }
+    
+    const data: BloodPressureData = {
+      systolic: systolicNum,
+      diastolic: diastolicNum
+    };
+    
+    // Add optional fields if they exist
+    if (pulse && !isNaN(parseInt(pulse))) {
+      data.pulse = parseInt(pulse);
+    }
+    
+    if (notes.trim()) {
+      data.notes = notes;
+    }
+    
+    onSubmit(data);
   };
   
   return (
@@ -37,6 +83,8 @@ const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ open, onOpenCha
                 id="systolic" 
                 type="number" 
                 placeholder="120" 
+                value={systolic}
+                onChange={(e) => setSystolic(e.target.value)}
                 required
               />
             </div>
@@ -46,6 +94,8 @@ const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ open, onOpenCha
                 id="diastolic" 
                 type="number" 
                 placeholder="80" 
+                value={diastolic}
+                onChange={(e) => setDiastolic(e.target.value)}
                 required
               />
             </div>
@@ -56,7 +106,9 @@ const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ open, onOpenCha
             <Input 
               id="pulse" 
               type="number" 
-              placeholder="75" 
+              placeholder="75"
+              value={pulse}
+              onChange={(e) => setPulse(e.target.value)}
             />
           </div>
           
@@ -66,6 +118,8 @@ const BloodPressureModal: React.FC<BloodPressureModalProps> = ({ open, onOpenCha
               id="notes" 
               placeholder="Any additional notes" 
               className="resize-none"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
             />
           </div>
           

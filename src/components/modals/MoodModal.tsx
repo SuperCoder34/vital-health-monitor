@@ -7,6 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
+interface MoodData {
+  mood: string;
+  notes?: string;
+}
+
 interface MoodOption {
   id: string;
   emoji: string;
@@ -24,10 +29,20 @@ const moodOptions: MoodOption[] = [
 interface MoodModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmit: (data: MoodData) => void;
 }
 
-const MoodModal: React.FC<MoodModalProps> = ({ open, onOpenChange }) => {
+const MoodModal: React.FC<MoodModalProps> = ({ open, onOpenChange, onSubmit }) => {
   const [selectedMood, setSelectedMood] = useState('');
+  const [notes, setNotes] = useState('');
+  
+  // Reset form when modal opens
+  React.useEffect(() => {
+    if (open) {
+      setSelectedMood('');
+      setNotes('');
+    }
+  }, [open]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,13 +55,19 @@ const MoodModal: React.FC<MoodModalProps> = ({ open, onOpenChange }) => {
       return;
     }
     
-    // In a real app, here we would send the data to a backend
-    toast({
-      title: "Mood recorded",
-      description: "Your mood has been recorded successfully.",
-    });
-    onOpenChange(false);
-    setSelectedMood('');
+    // Find the selected mood option to get its label
+    const selectedOption = moodOptions.find(option => option.id === selectedMood);
+    if (!selectedOption) return;
+    
+    const data: MoodData = {
+      mood: selectedOption.label
+    };
+    
+    if (notes.trim()) {
+      data.notes = notes;
+    }
+    
+    onSubmit(data);
   };
   
   return (
@@ -79,6 +100,8 @@ const MoodModal: React.FC<MoodModalProps> = ({ open, onOpenChange }) => {
               id="notes" 
               placeholder="What made you feel this way?" 
               className="resize-none h-20"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
             />
           </div>
           
