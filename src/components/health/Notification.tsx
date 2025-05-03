@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { MessageSquareMedical, LucideIcon } from 'lucide-react';
+import { MessageSquare, LucideIcon } from 'lucide-react';
 
 interface NotificationProps {
   icon?: LucideIcon;
@@ -12,7 +12,7 @@ interface NotificationProps {
 }
 
 const Notification: React.FC<NotificationProps> = ({
-  icon: Icon = MessageSquareMedical,
+  icon: Icon = MessageSquare,
   title,
   message,
   time,

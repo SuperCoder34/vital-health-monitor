@@ -9,9 +9,9 @@ import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { 
   MapPin, 
-  Running, 
+  Timer,
   Bike, 
-  Swimming,
+  Waves,
   Dumbbell
 } from 'lucide-react';
 
@@ -23,9 +23,9 @@ interface ActivityOption {
 
 const activityOptions: ActivityOption[] = [
   { id: 'walking', label: 'Walking', icon: <MapPin className="h-5 w-5 text-health-primary" /> },
-  { id: 'running', label: 'Running', icon: <Running className="h-5 w-5 text-health-primary" /> },
+  { id: 'running', label: 'Running', icon: <Timer className="h-5 w-5 text-health-primary" /> },
   { id: 'cycling', label: 'Cycling', icon: <Bike className="h-5 w-5 text-health-primary" /> },
-  { id: 'swimming', label: 'Swimming', icon: <Swimming className="h-5 w-5 text-health-primary" /> },
+  { id: 'swimming', label: 'Swimming', icon: <Waves className="h-5 w-5 text-health-primary" /> },
   { id: 'gym', label: 'Gym', icon: <Dumbbell className="h-5 w-5 text-health-primary" /> }
 ];
 
