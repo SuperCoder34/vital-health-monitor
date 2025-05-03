@@ -13,47 +13,21 @@ import ExerciseModal from '@/components/modals/ExerciseModal';
 import MoodModal from '@/components/modals/MoodModal';
 import WeightModal from '@/components/modals/WeightModal';
 import { useToast } from '@/components/ui/use-toast';
-
-interface BloodPressureData {
-  systolic: number;
-  diastolic: number;
-  pulse?: number;
-  notes?: string;
-}
-
-interface FoodData {
-  mealType: string;
-  description?: string;
-}
-
-interface MoodData {
-  mood: string;
-  notes?: string;
-}
-
-interface WeightData {
-  weight: number;
-  unit: string;
-  notes?: string;
-}
+import { useHealth } from '@/context/HealthContext';
 
 const Index = () => {
   const { toast } = useToast();
-  const [selectedDate, setSelectedDate] = useState('Today, May 3');
   const [openModal, setOpenModal] = useState<string | null>(null);
-
-  // State for health metrics
-  const [bloodPressure, setBloodPressure] = useState<BloodPressureData>({
-    systolic: 120,
-    diastolic: 80
-  });
-  const [dietStatus, setDietStatus] = useState('1350 cal - Good');
-  const [moodStatus, setMoodStatus] = useState('Happy');
-  const [medicationStatus, setMedicationStatus] = useState('3/3 Completed');
-  const [weightStatus, setWeightStatus] = useState<WeightData>({
-    weight: 70,
-    unit: 'kg'
-  });
+  
+  // Use the health context instead of local state
+  const { 
+    bloodPressure, setBloodPressure,
+    weight, setWeight,
+    mood, setMood,
+    dietStatus, setDietStatus,
+    medicationStatus, setMedicationStatus,
+    selectedDate, setSelectedDate
+  } = useHealth();
 
   const handleOpenModal = (modalType: string) => {
     setOpenModal(modalType);
@@ -64,7 +38,7 @@ const Index = () => {
   };
 
   // Handlers for submitting different health metrics
-  const handleBloodPressureSubmit = (data: BloodPressureData) => {
+  const handleBloodPressureSubmit = (data: typeof bloodPressure) => {
     setBloodPressure(data);
     
     // Determine blood pressure status
@@ -83,7 +57,7 @@ const Index = () => {
     handleCloseModal();
   };
 
-  const handleFoodSubmit = (data: FoodData) => {
+  const handleFoodSubmit = (data: { mealType: string, description?: string }) => {
     // In a real app, this would calculate calories based on food
     // For now, let's just update with a random calorie count
     const calories = Math.floor(Math.random() * 500) + 300;
@@ -97,8 +71,8 @@ const Index = () => {
     handleCloseModal();
   };
 
-  const handleMoodSubmit = (data: MoodData) => {
-    setMoodStatus(data.mood);
+  const handleMoodSubmit = (data: { mood: string, notes?: string }) => {
+    setMood(data.mood);
     
     toast({
       title: "Mood recorded",
@@ -108,8 +82,8 @@ const Index = () => {
     handleCloseModal();
   };
 
-  const handleWeightSubmit = (data: WeightData) => {
-    setWeightStatus(data);
+  const handleWeightSubmit = (data: typeof weight) => {
+    setWeight(data);
     
     toast({
       title: "Weight recorded",
@@ -151,7 +125,7 @@ const Index = () => {
           <MetricCard 
             icon={SmilePlus} 
             label="Mood Status" 
-            value={moodStatus} 
+            value={mood} 
             bgColor="bg-yellow-50"
             iconColor="text-yellow-600"
             onClick={() => handleOpenModal('mood')}
@@ -215,7 +189,7 @@ const Index = () => {
         open={openModal === 'weight'} 
         onOpenChange={() => handleCloseModal()}
         onSubmit={handleWeightSubmit}
-        defaultValues={weightStatus}
+        defaultValues={weight}
       />
     </div>
   );
