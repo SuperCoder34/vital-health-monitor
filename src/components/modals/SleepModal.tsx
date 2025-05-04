@@ -46,7 +46,11 @@ const SleepModal: React.FC<SleepModalProps> = ({
   });
 
   const handleSubmit = (data: SleepFormValues) => {
-    onSubmit(data);
+    onSubmit({
+      hours: data.hours,
+      quality: data.quality,
+      notes: data.notes
+    });
     form.reset();
   };
 

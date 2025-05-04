@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/layout/Header';
 import TabBar from '@/components/layout/TabBar';
@@ -7,7 +6,7 @@ import StatsSummary from '@/components/health/StatsSummary';
 import BloodPressureChart from '@/components/health/BloodPressureChart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useHealth } from '@/context/HealthContext';
-import { Pills, CloudMoon } from 'lucide-react';
+import { Pill, CloudMoon } from 'lucide-react';
 
 const Stats = () => {
   const { 
@@ -96,7 +95,7 @@ const Stats = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Pills className="h-5 w-5" />
+                    <Pill className="h-5 w-5" />
                     Medications
                   </CardTitle>
                   <CardDescription>Medication adherence</CardDescription>
