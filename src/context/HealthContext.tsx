@@ -14,9 +14,19 @@ interface WeightData {
   notes?: string;
 }
 
-interface FoodData {
-  mealType: string;
-  description?: string;
+interface SleepData {
+  hours: number;
+  quality: string;
+  notes?: string;
+}
+
+interface MedicationData {
+  taken: boolean;
+  medications: {
+    name: string;
+    dosage: string;
+    taken: boolean;
+  }[];
 }
 
 interface HealthContextType {
@@ -30,6 +40,10 @@ interface HealthContextType {
   setDietStatus: React.Dispatch<React.SetStateAction<string>>;
   medicationStatus: string;
   setMedicationStatus: React.Dispatch<React.SetStateAction<string>>;
+  sleep: SleepData;
+  setSleep: React.Dispatch<React.SetStateAction<SleepData>>;
+  medication: MedicationData;
+  setMedication: React.Dispatch<React.SetStateAction<MedicationData>>;
   selectedDate: string;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -48,6 +62,18 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [mood, setMood] = useState<string>('Happy');
   const [dietStatus, setDietStatus] = useState<string>('1350 cal - Good');
   const [medicationStatus, setMedicationStatus] = useState<string>('3/3 Completed');
+  const [sleep, setSleep] = useState<SleepData>({
+    hours: 7.5,
+    quality: 'Good'
+  });
+  const [medication, setMedication] = useState<MedicationData>({
+    taken: false,
+    medications: [
+      { name: 'Vitamin D', dosage: '1000 IU', taken: false },
+      { name: 'Multivitamin', dosage: '1 tablet', taken: false },
+      { name: 'Metformin', dosage: '500mg', taken: false }
+    ]
+  });
   const [selectedDate, setSelectedDate] = useState<string>('Today, May 3');
 
   return (
@@ -62,6 +88,10 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setDietStatus,
       medicationStatus,
       setMedicationStatus,
+      sleep,
+      setSleep,
+      medication,
+      setMedication,
       selectedDate,
       setSelectedDate
     }}>

@@ -7,6 +7,7 @@ import StatsSummary from '@/components/health/StatsSummary';
 import BloodPressureChart from '@/components/health/BloodPressureChart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useHealth } from '@/context/HealthContext';
+import { Pills, CloudMoon } from 'lucide-react';
 
 const Stats = () => {
   const { 
@@ -15,6 +16,8 @@ const Stats = () => {
     mood, 
     dietStatus, 
     medicationStatus, 
+    sleep,
+    medication,
     selectedDate 
   } = useHealth();
 
@@ -24,7 +27,9 @@ const Stats = () => {
     weight,
     mood,
     dietStatus,
-    medicationStatus
+    medicationStatus,
+    sleep,
+    medication
   };
 
   return (
@@ -66,6 +71,51 @@ const Stats = () => {
                 <CardContent>
                   <div className="flex items-center justify-center h-[200px] bg-muted/20 rounded-md">
                     <div className="text-2xl font-bold">{mood}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CloudMoon className="h-5 w-5" />
+                    Sleep
+                  </CardTitle>
+                  <CardDescription>Sleep duration and quality</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-center h-[200px] bg-muted/20 rounded-md">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{sleep.hours} hours</div>
+                      <div className="text-lg text-muted-foreground mt-2">Quality: {sleep.quality}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Pills className="h-5 w-5" />
+                    Medications
+                  </CardTitle>
+                  <CardDescription>Medication adherence</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col items-center justify-center h-[200px] bg-muted/20 rounded-md">
+                    <div className="text-2xl font-bold mb-4">
+                      {medication.medications.filter(med => med.taken).length}/{medication.medications.length} Taken
+                    </div>
+                    <div className="w-full max-w-xs">
+                      {medication.medications.map((med, index) => (
+                        <div key={index} className="flex justify-between items-center p-2 border-b">
+                          <span>{med.name} ({med.dosage})</span>
+                          <span className={med.taken ? "text-green-500" : "text-red-500"}>
+                            {med.taken ? "✓" : "✗"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

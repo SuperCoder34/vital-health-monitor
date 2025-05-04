@@ -18,6 +18,19 @@ interface HealthMetrics {
   mood: string;
   dietStatus: string;
   medicationStatus: string;
+  sleep: {
+    hours: number;
+    quality: string;
+    notes?: string;
+  };
+  medication: {
+    taken: boolean;
+    medications: {
+      name: string;
+      dosage: string;
+      taken: boolean;
+    }[];
+  };
 }
 
 interface StatsSummaryProps {
@@ -26,6 +39,10 @@ interface StatsSummaryProps {
 }
 
 const StatsSummary: React.FC<StatsSummaryProps> = ({ metrics, date }) => {
+  // Calculate the medication taken count
+  const medicationsTaken = metrics.medication.medications.filter(med => med.taken).length;
+  const totalMedications = metrics.medication.medications.length;
+
   return (
     <div className="space-y-4">
       <Card>
@@ -59,8 +76,12 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ metrics, date }) => {
                 <TableCell>{metrics.dietStatus}</TableCell>
               </TableRow>
               <TableRow>
+                <TableCell className="font-medium">Sleep</TableCell>
+                <TableCell>{metrics.sleep.hours} hours - {metrics.sleep.quality}</TableCell>
+              </TableRow>
+              <TableRow>
                 <TableCell className="font-medium">Medication</TableCell>
-                <TableCell>{metrics.medicationStatus}</TableCell>
+                <TableCell>{medicationsTaken}/{totalMedications} medications taken</TableCell>
               </TableRow>
             </TableBody>
           </Table>

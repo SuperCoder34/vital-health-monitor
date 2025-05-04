@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Heart, Utensils, SmilePlus, Pill } from 'lucide-react';
+import { Heart, Utensils, SmilePlus, Pill, CloudMoon } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import TabBar from '@/components/layout/TabBar';
 import DateSelector from '@/components/health/DateSelector';
@@ -12,6 +12,8 @@ import FoodModal from '@/components/modals/FoodModal';
 import ExerciseModal from '@/components/modals/ExerciseModal';
 import MoodModal from '@/components/modals/MoodModal';
 import WeightModal from '@/components/modals/WeightModal';
+import SleepModal from '@/components/modals/SleepModal';
+import MedicationModal from '@/components/modals/MedicationModal';
 import { useToast } from '@/components/ui/use-toast';
 import { useHealth } from '@/context/HealthContext';
 
@@ -26,6 +28,8 @@ const Index = () => {
     mood, setMood,
     dietStatus, setDietStatus,
     medicationStatus, setMedicationStatus,
+    sleep, setSleep,
+    medication, setMedication,
     selectedDate, setSelectedDate
   } = useHealth();
 
@@ -93,6 +97,32 @@ const Index = () => {
     handleCloseModal();
   };
 
+  const handleSleepSubmit = (data: typeof sleep) => {
+    setSleep(data);
+
+    toast({
+      title: "Sleep recorded",
+      description: `You slept for ${data.hours} hours with ${data.quality.toLowerCase()} quality.`
+    });
+
+    handleCloseModal();
+  };
+
+  const handleMedicationSubmit = (data: typeof medication) => {
+    setMedication(data);
+    
+    const completedCount = data.medications.filter(med => med.taken).length;
+    const totalCount = data.medications.length;
+    setMedicationStatus(`${completedCount}/${totalCount} Completed`);
+    
+    toast({
+      title: "Medications recorded",
+      description: `${completedCount} out of ${totalCount} medications taken.`
+    });
+    
+    handleCloseModal();
+  };
+
   return (
     <div className="pb-20 min-h-screen bg-gray-50">
       <Header />
@@ -136,7 +166,15 @@ const Index = () => {
             value={medicationStatus} 
             bgColor="bg-purple-50"
             iconColor="text-purple-600"
-            onClick={() => toast({ title: "All medications taken!", description: "You've taken all your medications for today." })}
+            onClick={() => handleOpenModal('medication')}
+          />
+          <MetricCard
+            icon={CloudMoon}
+            label="Sleep"
+            value={`${sleep.hours} hrs - ${sleep.quality}`}
+            bgColor="bg-indigo-50"
+            iconColor="text-indigo-600"
+            onClick={() => handleOpenModal('sleep')}
           />
         </div>
       </div>
@@ -190,6 +228,18 @@ const Index = () => {
         onOpenChange={() => handleCloseModal()}
         onSubmit={handleWeightSubmit}
         defaultValues={weight}
+      />
+      <SleepModal
+        open={openModal === 'sleep'} 
+        onOpenChange={() => handleCloseModal()}
+        onSubmit={handleSleepSubmit}
+        defaultValues={sleep}
+      />
+      <MedicationModal
+        open={openModal === 'medication'} 
+        onOpenChange={() => handleCloseModal()}
+        onSubmit={handleMedicationSubmit}
+        defaultValues={medication}
       />
     </div>
   );
